@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #0d0d0f;
+      --ink2:      #3a3a42;
+      --ink3:      #7a7a88;
+      --paper:     #f5f4f0;
+      --paper2:    #eceae3;
+      --paper3:    #e0ded6;
+      --accent:    #2563eb;
+      --accent2:   #1d4ed8;
+      --success:   #059669;
+      --danger:    #dc2626;
+      --warn:      #d97706;
+      --card-bg:   #ffffff;
+      --shadow:    0 2px 8px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.05);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.05);
+      --radius:    14px;
+      --radius-sm: 8px;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--ink);
+      color: #fff;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 0 rgba(255,255,255,.08);
+    }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .api-badge {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.7);
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: .03em;
+    }
+    .status-dot {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: rgba(255,255,255,.6);
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #6b7280;
+      transition: background .3s;
+    }
+    .dot.online { background: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,.3); }
+    .dot.offline { background: #ef4444; }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--paper2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .icon-blue { background: #eff6ff; }
+    .icon-green { background: #f0fdf4; }
+
+    .card-body { padding: 24px; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-of-type { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink2);
+      margin-bottom: 6px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--paper3);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--paper);
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+      background: #fff;
+    }
+    input::placeholder { color: var(--ink3); }
+    input.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,.1); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--ink3);
+      margin-top: 4px;
+    }
+    .field-error {
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.3); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-secondary {
+      background: var(--paper);
+      color: var(--ink2);
+      border: 1.5px solid var(--paper3);
+      font-size: 13px;
+      padding: 8px 14px;
+    }
+    .btn-secondary:hover { background: var(--paper2); border-color: var(--paper3); }
+
+    .btn-icon { font-size: 16px; }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .btn-primary.loading .spinner { display: block; }
+    .btn-primary.loading .btn-text { opacity: .7; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed;
+      top: 80px; right: 24px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-size: 13px;
+      max-width: 340px;
+      animation: slideIn .25s ease;
+      color: #fff;
+    }
+    .toast.success { background: var(--success); }
+    .toast.error   { background: var(--danger); }
+    .toast.info    { background: var(--accent); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .toast-msg { line-height: 1.4; }
+    @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+    @keyframes fadeOut { to { opacity:0; transform: translateX(20px); } }
+
+    /* ── LIST SECTION ── */
+    .list-controls {
+      padding: 16px 24px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--paper2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .list-controls input {
+      flex: 1;
+      background: #fff;
+      font-size: 13px;
+      padding: 8px 12px;
+    }
+
+    .schools-list {
+      min-height: 300px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      color: var(--ink3);
+      text-align: center;
+      gap: 12px;
+    }
+    .empty-state .empty-icon { font-size: 40px; opacity: .4; }
+    .empty-state p { font-size: 14px; }
+
+    /* Loading state */
+    .list-loading {
+      display: none;
+      padding: 40px;
+      text-align: center;
+      color: var(--ink3);
+      font-size: 13px;
+    }
+    .list-loading.show { display: block; }
+    .loading-dots span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ink3);
+      margin: 0 2px;
+      animation: bounce .9s ease-in-out infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: .15s; }
+    .loading-dots span:nth-child(3) { animation-delay: .30s; }
+    @keyframes bounce { 0%,80%,100%{transform:scale(.6)} 40%{transform:scale(1)} }
+
+    /* School card */
+    .school-item {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--paper2);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: background .15s;
+      animation: fadeUp .25s ease both;
+    }
+    .school-item:last-child { border-bottom: none; }
+    .school-item:hover { background: var(--paper); }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .school-rank {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--paper2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink2);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .school-rank.top { background: #fef3c7; color: #92400e; }
+
+    .school-info { flex: 1; min-width: 0; }
+    .school-name {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .school-address {
+      font-size: 12px;
+      color: var(--ink3);
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .school-coords {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--ink3);
+      font-family: monospace;
+    }
+
+    .school-distance {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .distance-value {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .distance-unit {
+      font-size: 10px;
+      color: var(--ink3);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      padding: 16px 24px;
+      border-top: 1px solid var(--paper2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ink3);
+    }
+    .pagination-btns { display: flex; gap: 6px; }
+    .page-btn {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      border: 1.5px solid var(--paper3);
+      background: var(--card-bg);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-body);
+      color: var(--ink2);
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .page-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── LOCATION BAR ── */
+    .location-bar {
+      background: var(--ink);
+      color: rgba(255,255,255,.75);
+      padding: 10px 24px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .location-bar strong { color: #fff; }
+    .loc-detect-btn {
+      margin-left: auto;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all .15s;
+    }
+    .loc-detect-btn:hover { background: rgba(255,255,255,.2); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--paper2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+    .stat {
+      background: var(--card-bg);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--font-head);
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--ink3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -.5px;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: var(--ink3);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🏫</div>
+    School MS
+    <span class="api-badge">REST API</span>
+  </div>
+  <div class="status-dot">
+    <div class="dot" id="status-dot"></div>
+    <span id="status-text">Checking...</span>
+  </div>
+</header>
+
+<!-- Location bar -->
+<div class="location-bar">
+  <span>📍 Your location: <strong id="loc-display">Not set</strong></span>
+  <span>Lat: <strong id="loc-lat">—</strong></span>
+  <span>Lng: <strong id="loc-lng">—</strong></span>
+  <button class="loc-detect-btn" onclick="detectLocation()">⊕ Auto-detect</button>
+</div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-label">Total Schools</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-nearest">—</div>
+      <div class="stat-label">Nearest (km)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-farthest">—</div>
+      <div class="stat-label">Farthest (km)</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: Add School -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Add School</div>
+        <div class="section-sub">Register a new school into the system</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="icon icon-blue">➕</div>
+            New School
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="add-form" novalidate>
+
+            <div class="form-group">
+              <label for="school-name">School Name</label>
+              <input type="text" id="school-name" placeholder="e.g. St. Xavier High School" autocomplete="off" />
+              <div class="field-error" id="err-name">Name must be at least 2 characters.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="school-address">Address</label>
+              <input type="text" id="school-address" placeholder="e.g. Mirzapur Road, Ahmedabad, Gujarat" />
+              <div class="field-error" id="err-address">Address must be at least 5 characters.</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="school-lat">Latitude</label>
+                <input type="number" id="school-lat" placeholder="23.0225" step="any" />
+                <div class="field-hint">-90 to 90</div>
+                <div class="field-error" id="err-lat">Must be between -90 and 90.</div>
+              </div>
+              <div class="form-group">
+                <label for="school-lng">Longitude</label>
+                <input type="number" id="school-lng" placeholder="72.5714" step="any" />
+                <div class="field-hint">-180 to 180</div>
+                <div class="field-error" id="err-lng">Must be between -180 and 180.</div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="add-btn">
+              <div class="spinner"></div>
+              <span class="btn-text">Add School</span>
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick fill samples -->
+      <div style="margin-top:14px">
+        <div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;font-weight:500;">Quick fill samples</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn btn-secondary" onclick="fillSample('Delhi Public School','Sector 45, Gurugram, Haryana',28.4595,77.0266)">Delhi Public School</button>
+          <button class="btn btn-secondary" onclick="fillSample('Ryan International','Malad West, Mumbai',19.1876,72.8484)">Ryan International</button>
+          <button class="btn btn-secondary" onclick="fillSample('Kendriya Vidyalaya','Navrangpura, Ahmedabad',23.0330,72.5580)">Kendriya Vidyalaya</button>
+          <button class="btn btn-secondary" onclick="fillSample('The Doon School','Mall Road, Dehradun',30.3165,78.0322)">The Doon School</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: List Schools -->
+    <div>
+      <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="section-title">Nearby Schools</div>
+          <div class="section-sub">Sorted by distance from your location</div>
+        </div>
+        <button class="btn btn-secondary" onclick="loadSchools()" style="font-size:12px;padding:7px 14px;">
+          ↻ Refresh
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="list-controls">
+          <input type="number" id="user-lat" placeholder="Your Latitude (e.g. 23.0225)" step="any" oninput="debounceLoad()" />
+          <input type="number" id="user-lng" placeholder="Your Longitude (e.g. 72.5714)" step="any" oninput="debounceLoad()" />
+        </div>
+
+        <div id="list-loading" class="list-loading">
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div style="margin-top:10px">Fetching schools...</div>
+        </div>
+
+        <div id="schools-list" class="schools-list">
+          <div class="empty-state">
+            <div class="empty-icon">🗺️</div>
+            <p>Enter your coordinates above<br>to see nearby schools</p>
+          </div>
+        </div>
+
+        <div class="pagination" id="pagination" style="display:none">
+          <span id="page-info">Page 1 of 1</span>
+          <div class="pagination-btns">
+            <button class="page-btn" id="prev-btn" onclick="changePage(-1)" disabled>‹</button>
+            <button class="page-btn" id="next-btn" onclick="changePage(1)" disabled>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────
+  const API_BASE = 'http://localhost:3000/api/v1';
+  let currentPage = 1;
+  const PAGE_SIZE = 5;
+  let debounceTimer;
+
+  // ── SERVER HEALTH CHECK ─────────────────────────────────
+  async function checkHealth() {
+    try {
+      const res = await fetch('http://localhost:3000/health');
+      if (res.ok) {
+        document.getElementById('status-dot').className = 'dot online';
+        document.getElementById('status-text').textContent = 'API Online';
+      } else throw new Error();
+    } catch {
+      document.getElementById('status-dot').className = 'dot offline';
+      document.getElementById('status-text').textContent = 'API Offline';
+    }
+  }
+  checkHealth();
+  setInterval(checkHealth, 15000);
+
+  // ── TOAST ───────────────────────────────────────────────
+  function toast(msg, type = 'info') {
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${msg}</span>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => {
+      el.style.animation = 'fadeOut .3s ease forwards';
+      setTimeout(() => el.remove(), 300);
+    }, 3500);
+  }
+
+  // ── LOCATION DETECTION ──────────────────────────────────
+  function detectLocation() {
+    if (!navigator.geolocation) return toast('Geolocation not supported.', 'error');
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude.toFixed(4);
+      const lng = pos.coords.longitude.toFixed(4);
+      document.getElementById('user-lat').value = lat;
+      document.getElementById('user-lng').value = lng;
+      document.getElementById('loc-lat').textContent = lat;
+      document.getElementById('loc-lng').textContent = lng;
+      document.getElementById('loc-display').textContent = 'Detected';
+      toast('Location detected!', 'success');
+      loadSchools();
+    }, () => toast('Could not detect location. Please enter manually.', 'error'));
+  }
+
+  // ── FORM VALIDATION ─────────────────────────────────────
+  function validate() {
+    let valid = true;
+    const fields = [
+      { id: 'school-name',    errId: 'err-name',    check: v => v.trim().length >= 2 },
+      { id: 'school-address', errId: 'err-address',  check: v => v.trim().length >= 5 },
+      { id: 'school-lat',     errId: 'err-lat',      check: v => v !== '' && +v >= -90  && +v <= 90 },
+      { id: 'school-lng',     errId: 'err-lng',      check: v => v !== '' && +v >= -180 && +v <= 180 },
+    ];
+    fields.forEach(({ id, errId, check }) => {
+      const inp = document.getElementById(id);
+      const err = document.getElementById(errId);
+      const ok = check(inp.value);
+      inp.classList.toggle('error', !ok);
+      err.classList.toggle('show', !ok);
+      if (!ok) valid = false;
+    });
+    return valid;
+  }
+
+  // Clear errors on input
+  ['school-name','school-address','school-lat','school-lng'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      this.classList.remove('error');
+      const errId = 'err-' + id.replace('school-','');
+      const el = document.getElementById(errId);
+      if (el) el.classList.remove('show');
+    });
+  });
+
+  // ── ADD SCHOOL ──────────────────────────────────────────
+  document.getElementById('add-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const btn = document.getElementById('add-btn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const payload = {
+      name:      document.getElementById('school-name').value.trim(),
+      address:   document.getElementById('school-address').value.trim(),
+      latitude:  parseFloat(document.getElementById('school-lat').value),
+      longitude: parseFloat(document.getElementById('school-lng').value),
+    };
+
+    try {
+      const res = await fetch(`${API_BASE}/schools/addSchool`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        toast(`"${payload.name}" added successfully!`, 'success');
+        document.getElementById('add-form').reset();
+        loadSchools();
+      } else if (res.status === 409) {
+        toast('This school already exists.', 'error');
+      } else if (data.errors) {
+        const msg = data.errors.map(e => e.message).join(', ');
+        toast(msg, 'error');
+      } else {
+        toast(data.message || 'Failed to add school.', 'error');
+      }
+    } catch (err) {
+      toast('Cannot reach API. Is the server running?', 'error');
+    } finally {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  });
+
+  // ── QUICK FILL ──────────────────────────────────────────
+  function fillSample(name, address, lat, lng) {
+    document.getElementById('school-name').value    = name;
+    document.getElementById('school-address').value = address;
+    document.getElementById('school-lat').value     = lat;
+    document.getElementById('school-lng').value     = lng;
+    ['school-name','school-address','school-lat','school-lng'].forEach(id => {
+      document.getElementById(id).classList.remove('error');
+    });
+    ['err-name','err-address','err-lat','err-lng'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
+    });
+  }
+
+  // ── LIST SCHOOLS ────────────────────────────────────────
+  function debounceLoad() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => { currentPage = 1; loadSchools(); }, 600);
+  }
+
+  async function loadSchools() {
+    const lat = document.getElementById('user-lat').value;
+    const lng = document.getElementById('user-lng').value;
+    if (!lat || !lng) return;
+
+    // Update location display
+    document.getElementById('loc-lat').textContent = parseFloat(lat).toFixed(4);
+    document.getElementById('loc-lng').textContent = parseFloat(lng).toFixed(4);
+    document.getElementById('loc-display').textContent = 'Manual';
+
+    const listEl    = document.getElementById('schools-list');
+    const loadingEl = document.getElementById('list-loading');
+
+    listEl.style.display   = 'none';
+    loadingEl.classList.add('show');
+
+    try {
+      const url = `${API_BASE}/schools/listSchools?latitude=${lat}&longitude=${lng}&page=${currentPage}&limit=${PAGE_SIZE}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) throw new Error(data.message || 'Failed');
+
+      const { schools, pagination } = data.data;
+
+      // Update stats
+      if (pagination.total > 0) {
+        document.getElementById('stat-total').textContent    = pagination.total;
+        document.getElementById('stat-nearest').textContent  = schools.length ? schools[0].distance_km : '—';
+        // Fetch all to get farthest only on page 1
+        if (currentPage === 1 && schools.length) {
+          document.getElementById('stat-farthest').textContent = schools[schools.length - 1].distance_km;
+        }
+      } else {
+        document.getElementById('stat-total').textContent    = 0;
+        document.getElementById('stat-nearest').textContent  = '—';
+        document.getElementById('stat-farthest').textContent = '—';
+      }
+
+      // Render list
+      if (schools.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🏫</div>
+            <p>No schools found.<br>Add one using the form!</p>
+          </div>`;
+      } else {
+        const offset = (currentPage - 1) * PAGE_SIZE;
+        listEl.innerHTML = schools.map((s, i) => `
+          <div class="school-item" style="animation-delay:${i * 0.05}s">
+            <div class="school-rank ${(offset + i) < 3 ? 'top' : ''}">${offset + i + 1}</div>
+            <div class="school-info">
+              <div class="school-name">${escHtml(s.name)}</div>
+              <div class="school-address">📍 ${escHtml(s.address)}</div>
+              <div class="school-coords">
+                <span>Lat: ${s.latitude}</span>
+                <span>Lng: ${s.longitude}</span>
+              </div>
+            </div>
+            <div class="school-distance">
+              <div class="distance-value">${s.distance_km}</div>
+              <div class="distance-unit">km away</div>
+            </div>
+          </div>`).join('');
+      }
+
+      // Pagination
+      const pag = document.getElementById('pagination');
+      if (pagination.total_pages > 1) {
+        pag.style.display = 'flex';
+        document.getElementById('page-info').textContent = `Page ${pagination.page} of ${pagination.total_pages}`;
+        document.getElementById('prev-btn').disabled = !pagination.has_prev;
+        document.getElementById('next-btn').disabled = !pagination.has_next;
+      } else {
+        pag.style.display = 'none';
+      }
+
+    } catch (err) {
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <p>Could not load schools.<br><small>${err.message}</small></p>
+        </div>`;
+    } finally {
+      loadingEl.classList.remove('show');
+      listEl.style.display = 'block';
+    }
+  }
+
+  function changePage(dir) {
+    currentPage += dir;
+    loadSchools();
+    document.querySelector('.card:last-child').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

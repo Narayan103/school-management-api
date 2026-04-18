@@ -1,0 +1,219 @@
+{
+  "info": {
+    "_postman_id": "school-mgmt-api-collection",
+    "name": "School Management API",
+    "description": "Production-ready API for adding and listing schools sorted by proximity.\n\nBase URL: http://localhost:3000\n\nEndpoints:\n- POST /api/v1/schools/addSchool\n- GET  /api/v1/schools/listSchools",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiVersion",
+      "value": "v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Verify the server is running and healthy."
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"success\": true,\n  \"status\": \"ok\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\",\n  \"environment\": \"development\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Schools",
+      "item": [
+        {
+          "name": "Add School — Success",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"St. Xavier High School\",\n  \"address\": \"Mirzapur Road, Ahmedabad, Gujarat\",\n  \"latitude\": 23.0225,\n  \"longitude\": 72.5714\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/addSchool",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "addSchool"]
+            },
+            "description": "Add a new school. All four fields are required."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"School added successfully.\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"St. Xavier High School\",\n    \"address\": \"Mirzapur Road, Ahmedabad, Gujarat\",\n    \"latitude\": 23.0225,\n    \"longitude\": 72.5714,\n    \"created_at\": \"2024-01-15T10:30:00.000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add School — Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"address\": \"Ahmedabad\",\n  \"latitude\": 999,\n  \"longitude\": 72.5714\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/addSchool",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "addSchool"]
+            },
+            "description": "Demonstrates validation errors for invalid input."
+          },
+          "response": [
+            {
+              "name": "422 Unprocessable Entity",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed. Please check your input.\",\n  \"errors\": [\n    { \"field\": \"name\",     \"message\": \"School name cannot be empty.\" },\n    { \"field\": \"address\",  \"message\": \"Address must be at least 5 characters.\" },\n    { \"field\": \"latitude\", \"message\": \"Latitude must be between -90 and 90.\" }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add School — Duplicate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"St. Xavier High School\",\n  \"address\": \"Mirzapur Road, Ahmedabad, Gujarat\",\n  \"latitude\": 23.0225,\n  \"longitude\": 72.5714\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/addSchool",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "addSchool"]
+            },
+            "description": "Send the same payload twice to trigger the duplicate-entry error."
+          },
+          "response": [
+            {
+              "name": "409 Conflict",
+              "status": "Conflict",
+              "code": 409,
+              "body": "{\n  \"success\": false,\n  \"message\": \"A school named \\\"St. Xavier High School\\\" at \\\"Mirzapur Road, Ahmedabad, Gujarat\\\" already exists.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Schools — Default (page 1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/listSchools?latitude=23.0225&longitude=72.5714",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "listSchools"],
+              "query": [
+                { "key": "latitude",  "value": "23.0225" },
+                { "key": "longitude", "value": "72.5714" }
+              ]
+            },
+            "description": "List schools sorted by distance from Ahmedabad city centre. Returns first 10 results."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Schools retrieved successfully.\",\n  \"data\": {\n    \"schools\": [\n      {\n        \"id\": 1,\n        \"name\": \"St. Xavier High School\",\n        \"address\": \"Mirzapur Road, Ahmedabad, Gujarat\",\n        \"latitude\": 23.0225,\n        \"longitude\": 72.5714,\n        \"created_at\": \"2024-01-15T10:30:00.000Z\",\n        \"updated_at\": \"2024-01-15T10:30:00.000Z\",\n        \"distance_km\": 0\n      },\n      {\n        \"id\": 3,\n        \"name\": \"Kendriya Vidyalaya\",\n        \"address\": \"Navrangpura, Ahmedabad, Gujarat\",\n        \"latitude\": 23.0330,\n        \"longitude\": 72.5580,\n        \"created_at\": \"2024-01-15T10:30:00.000Z\",\n        \"updated_at\": \"2024-01-15T10:30:00.000Z\",\n        \"distance_km\": 1.72\n      }\n    ],\n    \"pagination\": {\n      \"total\": 6,\n      \"page\": 1,\n      \"limit\": 10,\n      \"total_pages\": 1,\n      \"has_next\": false,\n      \"has_prev\": false\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Schools — Paginated (page 2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/listSchools?latitude=23.0225&longitude=72.5714&page=2&limit=3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "listSchools"],
+              "query": [
+                { "key": "latitude",  "value": "23.0225" },
+                { "key": "longitude", "value": "72.5714" },
+                { "key": "page",      "value": "2" },
+                { "key": "limit",     "value": "3" }
+              ]
+            },
+            "description": "Page 2 with 3 results per page."
+          },
+          "response": []
+        },
+        {
+          "name": "List Schools — Missing Params",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{apiVersion}}/schools/listSchools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{apiVersion}}", "schools", "listSchools"]
+            },
+            "description": "Omit latitude and longitude to see the validation error response."
+          },
+          "response": [
+            {
+              "name": "422 Unprocessable Entity",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed. Please check your input.\",\n  \"errors\": [\n    { \"field\": \"latitude\",  \"message\": \"Query param `latitude` is required.\" },\n    { \"field\": \"longitude\", \"message\": \"Query param `longitude` is required.\" }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
