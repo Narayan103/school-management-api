@@ -347,54 +347,6 @@ Included scenarios: success, validation error, duplicate, paginated list, missin
 
 ---
 
-## Deployment on Render
-
-### 1. Push to GitHub
-
-```bash
-git init && git add . && git commit -m "Initial commit"
-git remote add origin https://github.com/your-username/school-management-api.git
-git push -u origin main
-```
-
-### 2. Create a managed MySQL database
-
-| Provider      | Free tier | Notes                        |
-|---------------|-----------|------------------------------|
-| PlanetScale   | Yes       | Serverless MySQL             |
-| Railway       | Yes       | One-click MySQL              |
-| Aiven         | Yes       | 5 GB free                    |
-| Clever Cloud  | Yes       | 256 MB free MySQL            |
-
-Run `schema.sql` against the remote DB once it is provisioned:
-```bash
-mysql -h HOST -P PORT -u USER -pPASSWORD DATABASE < schema.sql
-```
-
-### 3. Create a Web Service on Render
-
-1. Go to https://render.com > **New > Web Service**
-2. Connect your GitHub repository
-3. Set:
-   - **Build command:** `npm install`
-   - **Start command:** `npm start`
-   - **Environment:** `Node`
-4. Add environment variables:
-
-```
-NODE_ENV=production
-DB_HOST=<remote-db-host>
-DB_PORT=3306
-DB_USER=<db-user>
-DB_PASSWORD=<db-password>
-DB_NAME=school_management
-CORS_ORIGIN=https://your-frontend.com
-```
-
-5. Click **Deploy**. Your API will be live at `https://your-service.onrender.com`.
-
----
-
 ## Architecture Notes
 
 ### Request lifecycle
